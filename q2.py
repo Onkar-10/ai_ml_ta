@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn import datasets
 
 
 class MultiClassLogisticRegression:
@@ -98,10 +99,9 @@ class MultiClassLogisticRegression:
         return post_cross_entropy
 
 
-data = pd.read_csv('iris.csv')
-from sklearn import datasets
-
-X, y = datasets.load_iris(return_X_y=True)
-lr = MultiClassLogisticRegression(thres=1e-5)
-lr.fit(X, y, lr=0.0001)
-print(lr.score(X, y))
+if __name__ == "__main__":
+    data = pd.read_csv('iris.csv')
+    X, y = datasets.load_iris(return_X_y=True)
+    lr = MultiClassLogisticRegression(thres=1e-5)
+    lr.fit(X, y, lr=0.0001)
+    print(lr.score(X, y))
