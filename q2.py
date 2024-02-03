@@ -60,9 +60,9 @@ class MultiClassLogisticRegression:
         """
         Apply the softmax activation function to transform the scores into probabilities.
         Args:
-            z: scores - type ()
+            z: scores - type ndarry (m number of observations, k number of classes)
 
-        Returns: probabilities - type ()
+        Returns: probabilities - type ndarry (m number of observations, k number of classes)
 
         """
         # Student code start TASK 2 : Write logistic function (sigmoid) for x (input scalar/array) and return it as y
@@ -95,10 +95,10 @@ class MultiClassLogisticRegression:
         """
         Compute the cross entropy loss.
         Args:
-            y: type ()
-            probs: type ()
+            y: type ndarry (m number of observations, k number of classes)
+            probs: type ndarry (m number of observations, k number of classes)
 
-        Returns: cross entropy loss - type ()
+        Returns: cross entropy loss - type float
 
         """
         # Student code start TASK 3 : Write logistic function (sigmoid) for x (input scalar/array) and return it as y
