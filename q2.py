@@ -30,10 +30,6 @@ class MultiClassLogisticRegression:
             update = (lr * np.dot(error.T, X_batch))
             self.weights += update
             if np.abs(update).max() < self.thres: break
-            if i % 1000 == 0 and verbose:
-                print(
-                    ' Training Accuray\[\textbf{Lasso Loss:} \quad \mathcal{L}(w) =  \frac{1}{n} \Vert y-\textbf{X}w \Vert_2^2 + \lambda \Vert w \Vert _1\] at {} iterations is {}'.format(
-                        i, self.evaluate_(X, y)))
             i += 1
 
     def predict(self, X):
@@ -79,17 +75,11 @@ class MultiClassLogisticRegression:
     def add_bias(self, X):
         return np.insert(X, 0, 1, axis=1)
 
-    def get_randon_weights(self, row, col):
-        return np.zeros(shape=(row, col))
-
     def one_hot(self, y):
         return np.eye(len(self.classes))[np.vectorize(lambda c: self.class_labels[c])(y).reshape(-1)]
 
     def score(self, X, y):
         return np.mean(self.predict_classes(X) == y)
-
-    def evaluate_(self, X, y):
-        return np.mean(np.argmax(self.predict_(X), axis=1) == np.argmax(y, axis=1))
 
     def cross_entropy(self, y, probs):
         """
