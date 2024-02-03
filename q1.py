@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 
-# Logistic function
+# Logistic function 
 def logistic(x):
     """
     Computes the logistic function applied to an input scalar/array
@@ -129,44 +129,8 @@ def grad_desc(X, y, w, b, alpha, n_iter, show_cost=True, show_params=False):
     return w, b, cost_history, params_history
 
 
-# Function to compute confusion matrix
-def conf_mat(y_test, y_pred):
-    """
-    Computes confusion matrix
-    Args:
-      y_test (array_like): true binary (0 or 1) labels
-      y_pred (array_like): predicted binary (0 or 1) labels
-    Returns:
-      confusion_mat (array): A 2D array representing a 2x2 confusion matrix
-    """
-    y_test, y_pred = list(y_test), list(y_pred)
-    count, labels, confusion_mat = len(y_test), [0, 1], np.zeros(shape=(2, 2), dtype=int)
-    for i in range(2):
-        for j in range(2):
-            confusion_mat[i][j] = len([k for k in range(count) if y_test[k] == labels[i] and y_pred[k] == labels[j]])
-    return confusion_mat
-
-
-# Function to compute accuracy
-def accuracy(y_test, y_pred):
-    """
-    Computes accuracy, given true and predicted binary (0 or 1) labels
-    Args:
-      y_test (array_like): true binary (0 or 1) labels
-      y_pred (array_like): predicted binary (0 or 1) labels
-    Returns:
-      acc (float): accuracy obtained from y_test and y_pred
-    """
-    confusion_mat = conf_mat(y_test, y_pred)
-    num = confusion_mat[0, 0] + confusion_mat[1, 1]  # Number of correct predictions
-    denom = num + confusion_mat[0, 1] + confusion_mat[1, 0]  # Number of total predictions
-    acc = num / denom
-    return acc
-
-
-if __name__ == "__main__":
-    # Loading the data
-    data = pd.read_csv('training.csv')
+def preprocessing(filename="training.csv"):
+    data = pd.read_csv(filename)
     print(pd.Series({"Dataset shape": "{}".format(data.shape)}).to_string())
     data.head()
 
@@ -209,8 +173,51 @@ if __name__ == "__main__":
     for col in X_test.columns:
         if (X_test[col].dtypes == 'int64' or X_test[col].dtypes == 'float64') and X_test[col].nunique() > 1:
             X_test[col] = (X_test[col] - X_test[col].min()) / (X_test[col].max() - X_test[col].min())
+    
+    return X_train,X_test,y_train,y_test
 
+
+
+# Function to compute confusion matrix
+def conf_mat(y_test, y_pred):
+    """
+    Computes confusion matrix
+    Args:
+      y_test (array_like): true binary (0 or 1) labels
+      y_pred (array_like): predicted binary (0 or 1) labels
+    Returns:
+      confusion_mat (array): A 2D array representing a 2x2 confusion matrix
+    """
+    y_test, y_pred = list(y_test), list(y_pred)
+    count, labels, confusion_mat = len(y_test), [0, 1], np.zeros(shape=(2, 2), dtype=int)
+    for i in range(2):
+        for j in range(2):
+            confusion_mat[i][j] = len([k for k in range(count) if y_test[k] == labels[i] and y_pred[k] == labels[j]])
+    return confusion_mat
+
+
+# Function to compute accuracy
+def accuracy(y_test, y_pred):
+    """
+    Computes accuracy, given true and predicted binary (0 or 1) labels
+    Args:
+      y_test (array_like): true binary (0 or 1) labels
+      y_pred (array_like): predicted binary (0 or 1) labels
+    Returns:
+      acc (float): accuracy obtained from y_test and y_pred
+    """
+    confusion_mat = conf_mat(y_test, y_pred)
+    num = confusion_mat[0, 0] + confusion_mat[1, 1]  # Number of correct predictions
+    denom = num + confusion_mat[0, 1] + confusion_mat[1, 0]  # Number of total predictions
+    acc = num / denom
+    return acc
+
+
+if __name__ == "__main__":
+    # Loading the data
+    
     # Initial values of the model parameters
+    X_train,X_test,y_train,y_test=preprocessing("training.csv")
     w_init = np.array([-5, -15, -10, 9, 4, -6, 3, -10, 1, 14, 0, 0, 15, 0, 0, 7, 0, -3, 1, -8]).astype(float)
     b_init = -1.
 
