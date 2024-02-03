@@ -13,7 +13,7 @@ start = time.time()
 process = psutil.Process(os.getpid())
 
 # Loading the data
-data = pd.read_csv('input/higgs-boson/training.zip')
+data = pd.read_csv('training.csv')
 print(pd.Series({"Dataset shape": "{}".format(data.shape)}).to_string())
 data.head()
 
@@ -42,7 +42,8 @@ def log_loss(y, y_dash):
     loss = - (y * np.log(y_dash)) - ((1 - y) * np.log(1 - y_dash))
     return loss
 
-# Cost function - using vectorization
+# Cost function - using vectorizationimport pandas as pd
+
 def cost_func_vec(y, y_dash):
     """
     Computes log loss for inputs true value (0 or 1) and predicted value (between 0 and 1)
