@@ -4,22 +4,7 @@ import matplotlib.pyplot as plt
 import math
 
 
-def accuracy_score(y_true, y_pred):
 
-	"""
-    Calculate the accuracy score.
-
-    Parameters:
-    - y_true (array-like): True labels.
-    - y_pred (array-like): Predicted labels.
-
-    Returns:
-    float: Accuracy score in percentage.
-    """
-
-	"""	score = (y_true - y_pred) / len(y_true) """
-
-	return round(float(sum(y_pred == y_true))/float(len(y_true)) * 100 ,2)
 
 def pre_processing(df):
 
@@ -255,8 +240,6 @@ if __name__ == "__main__":
 	nb_clf = NaiveBayes()
 	nb_clf.fit(X_train, y_train)
 
-	print("Train Accuracy: {}".format(accuracy_score(y_train, nb_clf.predict(X_train))))
-	print("Test Accuracy: {}".format(accuracy_score(y_test, nb_clf.predict(X_test))))
 	
 	#Query 1:
 	query = np.array([['Rainy','Mild', 'Normal', 't']])

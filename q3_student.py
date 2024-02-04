@@ -252,8 +252,6 @@ if __name__ == "__main__":
 	nb_clf = NaiveBayes()
 	nb_clf.fit(X_train, y_train)
 
-	print("Train Accuracy: {}".format(accuracy_score(y_train, nb_clf.predict(X_train))))
-	print("Test Accuracy: {}".format(accuracy_score(y_test, nb_clf.predict(X_test))))
 	
 	#Query 1:
 	query = np.array([['Rainy','Mild', 'Normal', 't']])
