@@ -6,13 +6,33 @@ import math
 
 def accuracy_score(y_true, y_pred):
 
+	"""
+    Calculate the accuracy score.
+
+    Parameters:
+    - y_true (array-like): True labels.
+    - y_pred (array-like): Predicted labels.
+
+    Returns:
+    float: Accuracy score in percentage.
+    """
+
 	"""	score = (y_true - y_pred) / len(y_true) """
 
 	return round(float(sum(y_pred == y_true))/float(len(y_true)) * 100 ,2)
 
 def pre_processing(df):
 
-	""" partioning data into features and target """
+	"""
+    Partition the data into features and target.
+
+    Parameters:
+    - df (DataFrame): Input DataFrame.
+
+    Returns:
+    tuple: Features (X) and target (y).
+    """
+
 
 	X = df.drop([df.columns[-1]], axis = 1)
 	y = df[df.columns[-1]]
@@ -21,7 +41,19 @@ def pre_processing(df):
 
 def train_test_split(x, y, test_size = 0.25, random_state = None):
 
-	""" partioning the data into train and test sets """
+	"""
+    Partition the data into train and test sets.
+
+    Parameters:
+    - x (array-like): Features.
+    - y (array-like): Target.
+    - test_size (float, optional): Percentage of data to be used for testing. Default is 0.25.
+    - random_state (int or None, optional): Seed for random number generation. Default is None.
+
+    Returns:
+    tuple: x_train, x_test, y_train, y_test.
+    """
+
 
 	x_test = x.sample(frac = test_size, random_state = random_state)
 	y_test = y[x_test.index]
@@ -50,6 +82,10 @@ class  NaiveBayes:
 	def __init__(self):
 
 		"""
+        Initialize NaiveBayes attributes.
+        """
+
+		"""
 			Attributes:
 				likelihoods: Likelihood of each feature per class
 				class_priors: Prior probabilities of classes 
@@ -68,6 +104,14 @@ class  NaiveBayes:
 		self.num_feats = int
 
 	def fit(self, X, y):
+
+		"""
+        Fit the Naive Bayes model to the training data.
+
+        Parameters:
+        - X (array-like): Training features.
+        - y (array-like): Training target.
+        """
 
 		self.features = list(X.columns)
 		self.X_train = X
@@ -95,7 +139,10 @@ class  NaiveBayes:
 
 	def _calc_class_prior(self):
 
-		""" P(c) - Prior Class Probability """
+
+		"""
+        Calculate the prior class probability.
+        """
 		
             # Student code start TASK 1 : Calculate Prior Probability of Classes P(y) from y_train also using train_size
 
@@ -112,6 +159,10 @@ class  NaiveBayes:
 
 	def _calc_likelihoods(self):
 
+		"""
+        Calculate the likelihood.
+        """
+
 		""" P(x|c) - Likelihood """
 
 		for feature in self.features:
@@ -126,6 +177,10 @@ class  NaiveBayes:
 
 	def _calc_predictor_prior(self):
 
+		"""
+        Calculate the predictor prior probability.
+        """
+
 		""" P(x) - Evidence """
 
 		for feature in self.features:
@@ -136,6 +191,17 @@ class  NaiveBayes:
 
 
 	def predict(self, X):
+		
+		"""
+        Predict the class labels for the given features.
+
+        Parameters:
+        - X (array-like): Features to be predicted.
+
+        Returns:
+        array: Predicted class labels.
+        """
+
 
 		""" Calculates Posterior probability P(c|x) """
 		
@@ -144,25 +210,26 @@ class  NaiveBayes:
 		results = []
 		X = np.array(X)
 
-         # Student code start TASK 2: Now, Calculate Posterior Probability for each class using the Naive Bayesian equation(TODO_2). The Class with maximum probability is the outcome of the prediction (TODO_3).
+         # Student code start TASK 2: Now, Calculate Posterior Probability for each class using the Naive Bayesian equation. The Class with maximum probability is the outcome of the prediction.
 
-		
+	
 		for query in X:
 			probs_outcome = {}
 			for outcome in np.unique(self.y_train):
-				prior = None #TODO_1   Take value from task-1 variable  (Remove 'None')
+
+				# prior = None #TODO_1   Take value from task-1 variable  (Remove 'None')
 				likelihood = 1
 				evidence = 1
 
 				for feat, feat_val in zip(self.features, query):
 					likelihood *= self.likelihoods[feat][feat_val + '_' + outcome]
 					evidence *= self.pred_priors[feat][feat_val]
-
-				posterior = 0 #TODO_2 (Remove '0')
+				
+				# posterior = 0 #TODO_2
 
 				probs_outcome[outcome] = posterior
 
-			result = None #TODO_3 (Remove 'None')
+			# result = None #TODO_3
 			results.append(result)
 
 		return np.array(results)
@@ -172,10 +239,9 @@ class  NaiveBayes:
 if __name__ == "__main__":
 
 	#Weather Dataset
-	print("\nWeather Dataset:")
+	print("Weather Dataset:")
 
 	df = pd.read_table("weather.txt")
-	#print(df)
 
 	#Split fearures and target
 	X,y  = pre_processing(df)
@@ -183,10 +249,8 @@ if __name__ == "__main__":
 	#Split data into Training and Testing Sets
 	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 0)
 
-	#print(X_train, y_train)
 	nb_clf = NaiveBayes()
 	nb_clf.fit(X_train, y_train)
-	#print(X_train, y_train)
 
 	print("Train Accuracy: {}".format(accuracy_score(y_train, nb_clf.predict(X_train))))
 	print("Test Accuracy: {}".format(accuracy_score(y_test, nb_clf.predict(X_test))))
@@ -202,3 +266,5 @@ if __name__ == "__main__":
 	#Query 3:
 	query = np.array([['Sunny','Hot', 'High', 't']])
 	print("Query 3:- {} ---> {}".format(query, nb_clf.predict(query)))
+	
+	

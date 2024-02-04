@@ -112,7 +112,7 @@ def grad_desc(X, y, w, w_0, alpha, n_iter, show_cost=True, show_params=False):
       w (array_like, shape (n,)): updated values of weight parameters
       w_0 (scalar)                : updated value of bias parameter
       cost_history              : List containing costs
-      params_history            : List containing both the wieights including bias
+      params_history            : List containing both the weights including bias
     """
     m, n = X.shape
     assert len(y) == m, "Number of feature observations and number of target observations do not match"
@@ -126,8 +126,8 @@ def grad_desc(X, y, w, w_0, alpha, n_iter, show_cost=True, show_params=False):
     for i in range(n_iter):
 
         grad_w, grad_w_0 = grad_logreg(X, y, w, w_0)
-        w += 0   #TODO Update 
-        w_0 += 0 #TODO Update
+        # w += 0   #TODO Update 
+        # w_0 += 0 #TODO Update
         cost = cost_logreg(X, y, w, w_0)
 
         cost_history.append(cost) 
@@ -215,6 +215,9 @@ if __name__ == "__main__":
     y_train_pred, y_test_pred = (y_train_prob > 0.5).astype(int), (y_test_prob > 0.5).astype(int)
     print(cost_history)
     print(params_history)
+    np.savetxt('output_q1_cost.txt', np.array(cost_history), fmt="%f")
+    with open("output_q1_params.txt","w") as output:
+        output.write(str(params_history))
     pass
 
 
