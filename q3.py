@@ -1,9 +1,5 @@
 import numpy as np 
 import pandas as pd 	
-import matplotlib.pyplot as plt 
-import math
-
-
 
 
 def pre_processing(df):
@@ -131,7 +127,6 @@ class  NaiveBayes:
 		
             # Student code start TASK 1 : Calculate Prior Probability of Classes P(y) from y_train also using train_size
 
-    
 		for outcome in np.unique(self.y_train):
 			### YOUR CODE BEGINS HERE ###
 
@@ -140,6 +135,7 @@ class  NaiveBayes:
 			self.class_priors[outcome] = outcome_count / self.train_size
 			# self.class_priors[outcome] = 0 #TODO_2    Remove 0 and write your code 
     		### YOUR CODE ENDS HERE ###
+
 
 
 
@@ -199,6 +195,8 @@ class  NaiveBayes:
          # Student code start TASK 2: Now, Calculate Posterior Probability for each class using the Naive Bayesian equation. The Class with maximum probability is the outcome of the prediction.
 
 	
+
+	
 		for query in X:
 			probs_outcome = {}
 			for outcome in np.unique(self.y_train):
@@ -212,12 +210,12 @@ class  NaiveBayes:
 					evidence *= self.pred_priors[feat][feat_val]
 				
 				posterior = (likelihood * prior) / (evidence)
-				# posterior = 0 #TODO_2
+				# posterior = 0 #TODO_2         Remove 0 and get posterior
 
 				probs_outcome[outcome] = posterior
 
 			result = max(probs_outcome, key = lambda x: probs_outcome[x])
-			# result = None #TODO_3
+			# result = None #TODO_3          Remove None and get the Max
 			results.append(result)
 
 		return np.array(results)

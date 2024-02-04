@@ -1,25 +1,6 @@
 import numpy as np 
 import pandas as pd 	
-import matplotlib.pyplot as plt 
-import math
 
-
-def accuracy_score(y_true, y_pred):
-
-	"""
-    Calculate the accuracy score.
-
-    Parameters:
-    - y_true (array-like): True labels.
-    - y_pred (array-like): Predicted labels.
-
-    Returns:
-    float: Accuracy score in percentage.
-    """
-
-	"""	score = (y_true - y_pred) / len(y_true) """
-
-	return round(float(sum(y_pred == y_true))/float(len(y_true)) * 100 ,2)
 
 def pre_processing(df):
 
@@ -217,7 +198,7 @@ class  NaiveBayes:
 			probs_outcome = {}
 			for outcome in np.unique(self.y_train):
 
-				# prior = None #TODO_1   Take value from task-1 variable  (Remove 'None')
+				prior = None #TODO_1   Take value from task-1 variable  (Remove 'None')
 				likelihood = 1
 				evidence = 1
 
@@ -225,11 +206,11 @@ class  NaiveBayes:
 					likelihood *= self.likelihoods[feat][feat_val + '_' + outcome]
 					evidence *= self.pred_priors[feat][feat_val]
 				
-				# posterior = 0 #TODO_2
+				posterior = 0 #TODO_2         Remove 0 and get posterior
 
 				probs_outcome[outcome] = posterior
 
-			# result = None #TODO_3
+			result = None #TODO_3          Remove None and get the Max
 			results.append(result)
 
 		return np.array(results)

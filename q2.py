@@ -1,7 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-from contextlib import redirect_stdout
 
 
 class MultiClassLogisticRegression:
