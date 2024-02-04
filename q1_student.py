@@ -43,13 +43,13 @@ def log_loss(y, y_dash):
     return loss
 
 
-def cost_logreg(X, y, w, b):
+def cost_logreg(X, y, w, w_0):
     """
     Args:
       X (ndarray, shape (m,n))  : data on features, m observations with n features
       y (array_like, shape (m,)): array of true values of target (0 or 1)
       w (array_like, shape (n,)): weight parameters of the model      
-      b (float)                 : bias parameter of the model
+      w_0 (float)                 : bias parameter of the model
     Returns:
       cost (float): nonnegative cost corresponding to y and y_dash 
     """
@@ -68,13 +68,13 @@ def cost_logreg(X, y, w, b):
 
 
 # Function to compute gradients of the cost function with respect to model parameters
-def grad_logreg(X, y, w, b):
+def grad_logreg(X, y, w, w_0):
     """
     Args:
       X (ndarray, shape (m,n))  : data on features, m observations with n features
       y (array_like, shape (m,)): array of true values of target (0 or 1)
       w (array_like, shape (n,)): weight parameters of the model      
-      b (float)                 : bias parameter of the model
+      w_0 (float)                 : bias parameter of the model
     Returns:
       grad_w (array_like, shape (n,)): gradients of the cost function with respect to the weight parameters
       grad_b (float)                 : gradient of the cost function with respect to the bias parameter
@@ -84,7 +84,7 @@ def grad_logreg(X, y, w, b):
     assert len(w) == n, "Number of features and number of weight parameters do not match"
 
     grad_w = np.zeros(n)
-    grad_b=0.0
+    grad_w_0=0.0
     # Student code start TASK 4a : Write Function to compute gradients of the cost function with respect to model parameters
 
     ### YOUR CODE BEGINS HERE ###
@@ -92,27 +92,27 @@ def grad_logreg(X, y, w, b):
     ### YOUR CODE ENDS HERE ###
 
     
-    return grad_w, grad_b
+    return grad_w, grad_w_0
 
 
 # Gradient descent algorithm for logistic regression
-def grad_desc(X, y, w, b, alpha, n_iter, show_cost=True, show_params=False):
+def grad_desc(X, y, w, w_0, alpha, n_iter, show_cost=True, show_params=False):
     """
     
     Args:
       X (ndarray, shape (m,n))  : data on features, m observations with n features
       y (array_like, shape (m,)): true values of target (0 or 1)
       w (array_like, shape (n,)): initial value of weight parameters
-      b (scalar)                : initial value of bias parameter
+      w_0 (scalar)                : initial value of bias parameter
       cost_func                 : function to compute cost
       grad_func                 : function to compute gradients of cost with respect to model parameters
       alpha (float)             : learning rate
       n_iter (int)              : number of iterations
     Returns:
       w (array_like, shape (n,)): updated values of weight parameters
-      b (scalar)                : updated value of bias parameter
-      cost_history              : List containing 
-      params_history            :
+      w_0 (scalar)                : updated value of bias parameter
+      cost_history              : List containing costs
+      params_history            : List containing both the wieights including bias
     """
     m, n = X.shape
     assert len(y) == m, "Number of feature observations and number of target observations do not match"
@@ -125,15 +125,13 @@ def grad_desc(X, y, w, b, alpha, n_iter, show_cost=True, show_params=False):
 
     for i in range(n_iter):
 
-        ### YOUR CODE BEGINS HERE ###
-        grad_w, grad_b = grad_logreg(X, y, w, b)
+        grad_w, grad_w_0 = grad_logreg(X, y, w, w_0)
         w += 0   #TODO Update 
-        b += 0 #TODO Update
-        cost = cost_logreg(X, y, w, b)
-        ### YOUR CODE ENDS HERE ###
+        w_0 += 0 #TODO Update
+        cost = cost_logreg(X, y, w, w_0)
 
         cost_history.append(cost) 
-        params_history.append([w, b])
+        params_history.append([w, w_0])
         
         if show_cost == True and show_params == False and (i % math.ceil(n_iter / 10) == 0 or i == n_iter - 1):
             print(f"Iteration {i:6}:    Cost  {float(cost_history[i]):3.4f}")
@@ -141,7 +139,7 @@ def grad_desc(X, y, w, b, alpha, n_iter, show_cost=True, show_params=False):
             print(f"Iteration {i:6}:    Cost  {float(cost_history[i]):3.4f},    Params  {params_history[i]}")
     
             
-    return w, b, cost_history, params_history
+    return w, w_0, cost_history, params_history
 
 
 def preprocessing(filename="training.csv"):
@@ -193,40 +191,6 @@ def preprocessing(filename="training.csv"):
 
 
 
-# Function to compute confusion matrix
-def conf_mat(y_test, y_pred):
-    """
-    Computes confusion matrix
-    Args:
-      y_test (array_like): true binary (0 or 1) labels
-      y_pred (array_like): predicted binary (0 or 1) labels
-    Returns:
-      confusion_mat (array): A 2D array representing a 2x2 confusion matrix
-    """
-    y_test, y_pred = list(y_test), list(y_pred)
-    count, labels, confusion_mat = len(y_test), [0, 1], np.zeros(shape=(2, 2), dtype=int)
-    for i in range(2):
-        for j in range(2):
-            confusion_mat[i][j] = len([k for k in range(count) if y_test[k] == labels[i] and y_pred[k] == labels[j]])
-    return confusion_mat
-
-
-# Function to compute accuracy
-def accuracy(y_test, y_pred):
-    """
-    Computes accuracy, given true and predicted binary (0 or 1) labels
-    Args:
-      y_test (array_like): true binary (0 or 1) labels
-      y_pred (array_like): predicted binary (0 or 1) labels
-    Returns:
-      acc (float): accuracy obtained from y_test and y_pred
-    """
-    confusion_mat = conf_mat(y_test, y_pred)
-    num = confusion_mat[0, 0] + confusion_mat[1, 1]  # Number of correct predictions
-    denom = num + confusion_mat[0, 1] + confusion_mat[1, 0]  # Number of total predictions
-    acc = num / denom
-    return acc
-
 
 if __name__ == "__main__":
     # Loading the data
@@ -234,21 +198,29 @@ if __name__ == "__main__":
     # Initial values of the model parameters
     X_train,X_test,y_train,y_test=preprocessing("training.csv")
     w_init = np.array([-5, -15, -10, 9, 4, -6, 3, -10, 1, 14, 0, 0, 15, 0, 0, 7, 0, -3, 1, -8]).astype(float)
-    b_init = -1.
+    w_0_init = -1.
 
     # Learning model parameters using gradient descent algorithm
     # Change n_iter as per convenience
-    w_out, b_out, cost_history, params_history = grad_desc(X_train.to_numpy(),
+    w_out, w_0_out, cost_history, params_history = grad_desc(X_train.to_numpy(),
                                                            y_train.to_numpy(),
                                                            w=w_init,  # np.zeros(X_train.shape[1]),
-                                                           b=b_init,  # 0,
+                                                           w_0=w_0_init,  # 0,
                                                            alpha=0.1,
                                                            n_iter=40)
 
     # Prediction and evaluation on the training set and the test set
-    y_train_prob = logistic(np.matmul(X_train.to_numpy(), w_out) + (b_out * np.ones(X_train.shape[0])))
-    y_test_prob = logistic(np.matmul(X_test.to_numpy(), w_out) + (b_out * np.ones(X_test.shape[0])))
+    y_train_prob = logistic(np.matmul(X_train.to_numpy(), w_out) + (w_0_out * np.ones(X_train.shape[0])))
+    y_test_prob = logistic(np.matmul(X_test.to_numpy(), w_out) + (w_0_out * np.ones(X_test.shape[0])))
     y_train_pred, y_test_pred = (y_train_prob > 0.5).astype(int), (y_test_prob > 0.5).astype(int)
-    print(pd.Series({"Training accuracy": accuracy(y_train, y_train_pred),
-                     "Test accuracy": accuracy(y_test, y_test_pred)}).to_string())
+    print(cost_history)
+    print(params_history)
     pass
+
+
+
+
+
+
+
+
