@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from contextlib import redirect_stdout
 
 
 class MultiClassLogisticRegression:
@@ -9,7 +10,7 @@ class MultiClassLogisticRegression:
         self.n_iter = n_iter
         self.thres = thres
     
-    def fit(self, X, y, batch_size=64, lr=0.001, rand_seed=4, verbose=False): 
+    def fit(self, X, y, rand_seed=4): 
         np.random.seed(rand_seed) 
         self.classes = np.unique(y)
         self.class_labels = {c:i for i,c in enumerate(self.classes)}
@@ -17,7 +18,6 @@ class MultiClassLogisticRegression:
         y = self.one_hot(y)
         self.loss = []
         self.weights = np.zeros(shape=(len(self.classes),X.shape[1]))
-        # self.fit_data(X, y, batch_size, lr, verbose)
         return X,y
  
     def fit_data(self, X, y, batch_size=64, lr=0.001, verbose=False):
@@ -30,8 +30,6 @@ class MultiClassLogisticRegression:
             update = (lr * np.dot(error.T, X_batch))
             self.weights += update
             if np.abs(update).max() < self.thres: break
-            if i % 1000 == 0 and verbose: 
-                print(' Training Accuray\[\textbf{Lasso Loss:} \quad \mathcal{L}(w) =  \frac{1}{n} \Vert y-\textbf{X}w \Vert_2^2 + \lambda \Vert w \Vert _1\] at {} iterations is {}'.format(i, self.evaluate_(X, y)))
             i +=1
 
     
@@ -71,11 +69,14 @@ class MultiClassLogisticRegression:
     ### YOUR CODE ENDS HERE ###
         return post_cross_entropy
     
-data = pd.read_csv('iris.csv')
-from sklearn import datasets
+if __name__ == "__main__":
 
-X,y = datasets.load_iris(return_X_y=True)
-lr = MultiClassLogisticRegression(thres=1e-5)
-X,y=lr.fit(X,y,lr=0.0001)
-lr.fit_data(X,y,lr=0.0001)
-print(lr.weights)
+    data = pd.read_csv('iris.csv')
+    from sklearn import datasets
+
+    X,y = datasets.load_iris(return_X_y=True)
+    lr = MultiClassLogisticRegression(thres=1e-5)
+    X,y=lr.fit(X,y)
+    lr.fit_data(X,y,lr=0.0001)
+    print(lr.weights)
+    np.savetxt('expected_output_q2.txt', lr.weights, fmt="%f")
