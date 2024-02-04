@@ -23,21 +23,19 @@ class MultiClassLogisticRegression:
     def fit_data(self, X, y, batch_size=64, lr=0.001, verbose=False):
         i = 0
         while (not self.n_iter or i < self.n_iter):
-            self.loss.append(self.cross_entropy(y, self.predict_(X)))
+            self.loss.append(self.cross_entropy(y, self.softmax(self.predict(X))))
             idx = np.random.choice(X.shape[0], batch_size)
             X_batch, y_batch = X[idx], y[idx]
-            error = y_batch - self.predict_(X_batch)
+            error = y_batch - self.softmax(self.predict(X_batch))
             update = (lr * np.dot(error.T, X_batch))
             self.weights += update
             if np.abs(update).max() < self.thres: break
             if i % 1000 == 0 and verbose: 
                 print(' Training Accuray\[\textbf{Lasso Loss:} \quad \mathcal{L}(w) =  \frac{1}{n} \Vert y-\textbf{X}w \Vert_2^2 + \lambda \Vert w \Vert _1\] at {} iterations is {}'.format(i, self.evaluate_(X, y)))
             i +=1
+
     
     def predict(self, X):
-        return self.predict_(self.add_bias(X))
-    
-    def predict_(self, X):
         
              
     # Student code start TASK 1 : For each class k compute a linear combination of the input features and the weight vector of class k, that is,for each training example compute a score for each class.
@@ -46,7 +44,7 @@ class MultiClassLogisticRegression:
         pre_vals = np.dot(X, self.weights.T).reshape(-1,len(self.classes))
     ### YOUR CODE ENDS HERE ###
         
-        return self.softmax(pre_vals)
+        return pre_vals
     
     def softmax(self, z):
     # Student code start TASK 2 : Write softmax function
@@ -56,24 +54,13 @@ class MultiClassLogisticRegression:
     ### YOUR CODE ENDS HERE ###
         return post_softmax
 
-    def predict_classes(self, X):
-        self.probs_ = self.predict(X)
-        return np.vectorize(lambda c: self.classes[c])(np.argmax(self.probs_, axis=1))
   
     def add_bias(self,X):
         return np.insert(X, 0, 1, axis=1)
-  
-    def get_randon_weights(self, row, col):
-        return np.zeros(shape=(row,col))
 
     def one_hot(self, y):
         return np.eye(len(self.classes))[np.vectorize(lambda c: self.class_labels[c])(y).reshape(-1)]
-    
-    def score(self, X, y):
-        return np.mean(self.predict_classes(X) == y)
-    
-    def evaluate_(self, X, y):
-        return np.mean(np.argmax(self.predict_(X), axis=1) == np.argmax(y, axis=1))
+
     
     def cross_entropy(self, y, probs):
 
@@ -91,4 +78,4 @@ X,y = datasets.load_iris(return_X_y=True)
 lr = MultiClassLogisticRegression(thres=1e-5)
 X,y=lr.fit(X,y,lr=0.0001)
 lr.fit_data(X,y,lr=0.0001)
-print(lr.score(X, y))
+print(lr.weights)
