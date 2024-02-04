@@ -17,10 +17,10 @@ class MultiClassLogisticRegression:
         y = self.one_hot(y)
         self.loss = []
         self.weights = np.zeros(shape=(len(self.classes),X.shape[1]))
-        self.fit_data(X, y, batch_size, lr, verbose)
-        return self
+        # self.fit_data(X, y, batch_size, lr, verbose)
+        return X,y
  
-    def fit_data(self, X, y, batch_size, lr, verbose):
+    def fit_data(self, X, y, batch_size=64, lr=0.001, verbose=False):
         i = 0
         while (not self.n_iter or i < self.n_iter):
             self.loss.append(self.cross_entropy(y, self.predict_(X)))
@@ -89,5 +89,6 @@ from sklearn import datasets
 
 X,y = datasets.load_iris(return_X_y=True)
 lr = MultiClassLogisticRegression(thres=1e-5)
-lr.fit(X,y,lr=0.0001)
+X,y=lr.fit(X,y,lr=0.0001)
+lr.fit_data(X,y,lr=0.0001)
 print(lr.score(X, y))
